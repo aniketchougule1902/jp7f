@@ -766,9 +766,9 @@ CREATE POLICY "Users can update own notifications"
   ON notifications FOR UPDATE
   USING (user_id = auth.uid());
 
-CREATE POLICY "System can insert notifications"
+CREATE POLICY "Superusers can insert notifications"
   ON notifications FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (is_superuser());
 
 -- -------------------------------------------------------
 -- 5.13 User Sessions policies
@@ -792,9 +792,9 @@ CREATE POLICY "Superusers can view all system logs"
   ON system_logs FOR SELECT
   USING (is_superuser());
 
-CREATE POLICY "System can insert logs"
+CREATE POLICY "Superusers can insert logs"
   ON system_logs FOR INSERT
-  WITH CHECK (true);
+  WITH CHECK (is_superuser());
 
 -- -------------------------------------------------------
 -- 5.15 Verification Queue policies
