@@ -42,7 +42,7 @@ class AppointmentModel {
   final String appointmentTime;
   final AppointmentStatus status;
   final String? notes;
-  final int? rating;
+  final double? rating;
   final String? ratingComment;
   final String? rescheduledFrom;
   final DateTime? createdAt;
@@ -81,7 +81,7 @@ class AppointmentModel {
           ? AppointmentStatus.fromString(json['status'] as String)
           : AppointmentStatus.scheduled,
       notes: json['notes'] as String?,
-      rating: json['rating'] as int?,
+      rating: (json['rating'] as num?)?.toDouble(),
       ratingComment: json['rating_comment'] as String?,
       rescheduledFrom: json['rescheduled_from'] as String?,
       createdAt: json['created_at'] != null
@@ -121,7 +121,7 @@ class AppointmentModel {
     String? appointmentTime,
     AppointmentStatus? status,
     String? notes,
-    int? rating,
+    double? rating,
     String? ratingComment,
     String? rescheduledFrom,
     DateTime? createdAt,
