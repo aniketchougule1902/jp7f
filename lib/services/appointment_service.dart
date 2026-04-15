@@ -84,7 +84,8 @@ class AppointmentService {
     }
   }
 
-  /// Reschedules an existing appointment.
+  /// Reschedules an appointment by marking the old one as rescheduled
+  /// and creating a new appointment with the updated date/time.
   Future<({AppointmentModel? appointment, String? error})>
       rescheduleAppointment(
     String appointmentId,
@@ -92,15 +93,33 @@ class AppointmentService {
     String newTime,
   ) async {
     try {
+      // Fetch the original appointment to copy its details.
+      final original = await _client
+          .from('appointments')
+          .select()
+          .eq('id', appointmentId)
+          .single();
+
+      // Mark the original as rescheduled.
+      await _client
+          .from('appointments')
+          .update({'status': AppointmentStatus.rescheduled.name})
+          .eq('id', appointmentId);
+
+      // Create a new appointment referencing the original.
+      final newData = {
+        'patient_id': original['patient_id'],
+        'doctor_id': original['doctor_id'],
+        'appointment_date': newDate.toIso8601String(),
+        'appointment_time': newTime,
+        'notes': original['notes'],
+        'status': AppointmentStatus.scheduled.name,
+        'rescheduled_from': appointmentId,
+      };
+
       final response = await _client
           .from('appointments')
-          .update({
-            'appointment_date': newDate.toIso8601String(),
-            'appointment_time': newTime,
-            'status': AppointmentStatus.rescheduled.name,
-            'rescheduled_from': appointmentId,
-          })
-          .eq('id', appointmentId)
+          .insert(newData)
           .select()
           .single();
       return (

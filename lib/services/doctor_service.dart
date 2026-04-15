@@ -101,12 +101,11 @@ class DoctorService {
       String userId) async {
     try {
       final now = DateTime.now();
-      final todayStart = DateTime(now.year, now.month, now.day).toIso8601String();
+      final today = DateTime(now.year, now.month, now.day);
+      final todayStart = today.toIso8601String();
       final oneWeekAgo = now.subtract(const Duration(days: 7)).toIso8601String();
-      final oneMonthAgo =
-          DateTime(now.year, now.month - 1, now.day).toIso8601String();
-      final oneYearAgo =
-          DateTime(now.year - 1, now.month, now.day).toIso8601String();
+      final oneMonthAgo = now.subtract(const Duration(days: 30)).toIso8601String();
+      final oneYearAgo = now.subtract(const Duration(days: 365)).toIso8601String();
 
       final todayAppointments = await _client
           .from('appointments')
